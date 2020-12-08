@@ -21,6 +21,6 @@ public class Game extends JFrame {
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         screen = new Screen(this);
-	add(screen);
+	    add(screen);
     }
 }

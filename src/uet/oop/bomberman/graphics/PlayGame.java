@@ -28,11 +28,13 @@ public class PlayGame extends JPanel implements Runnable, ActionListener {
     private Screen screen;
     private ManageEntity manageEntity = new ManageEntity();
     private BitSet traceKey = new BitSet();
+    private BitSet traceKey1 = new BitSet();
     public static boolean running = true;
     private int count = 0;
     private int timeDie = 0;
     private int timeLose = 0;
     private int timeWin = 0;
+    private int timeNext = 0;
 
     public PlayGame(Screen screen) {
         this.screen = screen;
@@ -62,7 +64,9 @@ public class PlayGame extends JPanel implements Runnable, ActionListener {
         manageEntity.showAllWall(graphics2d);
         manageEntity.showAllEnemy(graphics2d);
         manageEntity.showAllRedEnemy(graphics2d);
-        manageEntity.showResult(graphics2d, manageEntity.getResult());
+        manageEntity.showAllFlyEnemy(graphics2d);
+        manageEntity.showAllBigEnemy(graphics2d);
+        manageEntity.showResult(graphics2d, manageEntity.getResult(),count);
 
         //for (int i = 0; i < mManager.getArrBomb().size(); i++) mManager.getArrBomb().get(i).showEntity(graphics2d);
         manageEntity.getBomber().showEntity(graphics2d);
@@ -72,12 +76,12 @@ public class PlayGame extends JPanel implements Runnable, ActionListener {
         @Override
         public void keyPressed(KeyEvent e) {
             traceKey.set(e.getKeyCode());
+            traceKey1.set(e.getKeyCode());
+            //traceKey1.clear(e.getKeyCode());
         }
-        
+
         @Override
-        public void keyReleased(KeyEvent e) {
-            traceKey.clear(e.getKeyCode());
-        }
+        public void keyReleased(KeyEvent e) { traceKey.clear(e.getKeyCode()); }
     };
     
     
@@ -136,19 +140,30 @@ public class PlayGame extends JPanel implements Runnable, ActionListener {
                 //}
             }
 
-            if(manageEntity.getResult() == 2){
-                timeWin++;
-                if(timeWin == 800){
-                    running = false;
-                    //screen.setVisible(false);
-                }
+            if(manageEntity.getResult() == 2 && manageEntity.checkKey()){
+                timeNext++;
+                if(timeNext == 5)manageEntity.initManager();
+            }
+            if(manageEntity.getResult() == 3){
+                running = false;
             }
             manageEntity.moveAllEnemy(count);
             manageEntity.moveAllRedEnemy(count);
+            manageEntity.moveAllFlyEnemy(count);
+            manageEntity.moveAllBigEnemy(count);
             repaint();
             count++;
             if (count == 1000000) {
                 count = 0;
+            }
+            if (traceKey1.get(KeyEvent.VK_F1) && manageEntity.getResult() == 0) {
+                System.out.println("next");
+                manageEntity.clearall();
+                manageEntity.setKey(1);
+            }
+            if (traceKey1.get(KeyEvent.VK_F2) && manageEntity.getResult() == 2) {
+                System.out.println("next");
+                manageEntity.clearall();
             }
         }
     }

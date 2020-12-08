@@ -27,8 +27,15 @@ public class ManageEntity {
     private ArrayList<FlameBomb> arrFlameBomb;
     private ArrayList<Enemy> arrEnemy;
     private ArrayList<RedEnemy> arrRedEnemy;
+    private ArrayList<FlyEnemy> arrFlyEnemy;
+    private ArrayList<BigEnemy> arrBigEnemy;
+    private ArrayList<Portal> arrPortal;
     private Random random = new Random();
     private int result = 0;
+    private int pt = 0;
+    private int countBig = 0;
+    private int hp[];
+    private int key;
     
     public Bomber getBomber() {
         return bomber;
@@ -54,11 +61,135 @@ public class ManageEntity {
     }
     
     public ManageEntity() {
-        init();
+        initManager();
+    }
+    public void initManager(){
+        if(result == 0) init();
+        if(result == 2) {
+            init2();
+            pt = 1;
+        }
     }
 
-    private void init() {
-        //ound.getIstance().getAudio(Sound.PLAYGAME).loop();
+    private void init2(){
+        bomber = new Bomber(45, 45, MoveEntity.BOMBER, MoveEntity.DOWN, 5, 1, 1);
+        try {
+            FileReader file;
+            file = new FileReader("src/Level2.txt");
+            BufferedReader input = new BufferedReader(file);
+            String info = input.readLine();
+            String str[] = info.split(" ");
+            int level = Integer.parseInt(str[0]);
+            int row = Integer.parseInt(str[1]);
+            int col = Integer.parseInt(str[2]);
+            char map[][] = new char[row][col];
+            for (int i = 0; i < row; i++) {
+                String column = input.readLine();
+                for (int j = 0; j < col; j++) {
+                    map[i][j] = column.charAt(j);
+                }
+            }
+            arrWall = new ArrayList<>();
+            arrBrick = new ArrayList<>();
+            arrBombItem = new ArrayList<>();
+            arrFlameItem = new ArrayList<>();
+            arrSpeedItem = new ArrayList<>();
+            arrEnemy = new ArrayList<>();
+            arrBomb = new ArrayList<>();
+            arrFlameBomb = new ArrayList<>();
+            arrRedEnemy = new ArrayList<>();
+            arrGrass = new ArrayList<>();
+            arrFlyEnemy = new ArrayList<>();
+            arrBigEnemy = new ArrayList<>();
+            hp = new int[101];
+            for (int i = 0; i < row; i++) {
+                for (int j = 0; j < col; j++) {
+                    switch (map[i][j]) {
+                        case '#':
+                            Grass grass5 = new Grass(j * 45, i * 45);
+                            arrGrass.add(grass5);
+                            Wall wall = new Wall(j * 45, i * 45);
+                            arrWall.add(wall);
+                            break;
+                        case '*':
+                            Grass grass6 = new Grass(j * 45, i * 45);
+                            arrGrass.add(grass6);
+                            Brick brick = new Brick(j * 45, i * 45);
+                            arrBrick.add(brick);
+                            break;
+                        case '1':
+                            Grass grass1 = new Grass(j * 45, i * 45);
+                            arrGrass.add(grass1);
+                            Enemy enemy = new Enemy(j * 45, i * 45, 3, 10);
+                            arrEnemy.add(enemy);
+                            break;
+                        case '2':
+                            Grass grass2 = new Grass(j * 45, i * 45);
+                            arrGrass.add(grass2);
+                            RedEnemy redEnemy = new RedEnemy(j * 45, i * 45, 3, 6);
+                            arrRedEnemy.add(redEnemy);
+                            hp[countBig++] = 3;
+                            break;
+                        case '3':
+                            Grass grass25 = new Grass(j * 45, i * 45);
+                            arrGrass.add(grass25);
+                            FlyEnemy flyEnemy = new FlyEnemy(j * 45, i * 45, 3, 8);
+                            arrFlyEnemy.add(flyEnemy);
+                            break;
+                        case '4':
+                            Grass grass26 = new Grass(j * 45, i * 45);
+                            arrGrass.add(grass26);
+                            BigEnemy BigEnemy = new BigEnemy(j * 45, i * 45, 3, 8);
+                            arrBigEnemy.add(BigEnemy);
+                            hp[countBig++]=3;
+                            break;
+                        case 'b':
+                        {
+                            Grass grass23 = new Grass(j * 45, i * 45);
+                            arrGrass.add(grass23);
+                            Brick brick1 = new Brick(j * 45, i * 45);
+                            arrBrick.add(brick1);
+                            BombItem bombItem = new BombItem(j * 45, i * 45);
+                            arrBombItem.add(bombItem);
+                            break;
+                        }
+                        case 'f':
+                        {
+                            Grass grass11 = new Grass(j * 45, i * 45);
+                            arrGrass.add(grass11);
+                            Brick brick2 = new Brick(j * 45, i * 45);
+                            arrBrick.add(brick2);
+                            FlameItem flameItem = new FlameItem(j * 45, i * 45);
+                            arrFlameItem.add(flameItem);
+                            break;
+                        }
+                        case 's':
+                        {
+                            Grass grass21 = new Grass(j * 45, i * 45);
+                            arrGrass.add(grass21);
+                            Brick brick3 = new Brick(j * 45, i * 45);
+                            arrBrick.add(brick3);
+                            SpeedItem speedItem = new SpeedItem(j * 45, i * 45);
+                            arrSpeedItem.add(speedItem);
+                            break;
+                        }
+                        default:
+                            Grass grass = new Grass(j * 45, i * 45);
+                            arrGrass.add(grass);
+                            break;
+                    }
+
+
+                }
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private void init(){
         bomber = new Bomber(45, 45, MoveEntity.BOMBER, MoveEntity.DOWN, 5, 1, 1);
         try {
             FileReader file;
@@ -76,16 +207,20 @@ public class ManageEntity {
                     map[i][j] = column.charAt(j);
                 }
             }
-            arrWall = new ArrayList<Wall>();
-            arrBrick = new ArrayList<Brick>();
-            arrBombItem = new ArrayList<BombItem>();
-            arrFlameItem = new ArrayList<FlameItem>();
-            arrSpeedItem = new ArrayList<SpeedItem>();
-            arrEnemy = new ArrayList<Enemy>();
-            arrBomb = new ArrayList<Bomb>();
-            arrFlameBomb = new ArrayList<FlameBomb>();
-            arrRedEnemy = new ArrayList<RedEnemy>();
-            arrGrass = new ArrayList<Grass>();
+            arrWall = new ArrayList<>();
+            arrBrick = new ArrayList<>();
+            arrBombItem = new ArrayList<>();
+            arrFlameItem = new ArrayList<>();
+            arrSpeedItem = new ArrayList<>();
+            arrEnemy = new ArrayList<>();
+            arrBomb = new ArrayList<>();
+            arrFlameBomb = new ArrayList<>();
+            arrRedEnemy = new ArrayList<>();
+            arrGrass = new ArrayList<>();
+            arrFlyEnemy = new ArrayList<>();
+            arrBigEnemy = new ArrayList<>();
+            arrPortal = new ArrayList<>();
+            hp = new int[101];
             for (int i = 0; i < row; i++) {
                 for (int j = 0; j < col; j++) {
                     switch (map[i][j]) {
@@ -100,7 +235,7 @@ public class ManageEntity {
                             arrGrass.add(grass6);
                             Brick brick = new Brick(j * 45, i * 45);
                             arrBrick.add(brick);
-                            break;   
+                            break;
                         case '1':
                             Grass grass1 = new Grass(j * 45, i * 45);
                             arrGrass.add(grass1);
@@ -112,37 +247,61 @@ public class ManageEntity {
                             arrGrass.add(grass2);
                             RedEnemy redEnemy = new RedEnemy(j * 45, i * 45, 3, 6);
                             arrRedEnemy.add(redEnemy);
+                            hp[countBig++] = 3;
+                            break;
+                        case '3':
+                            Grass grass25 = new Grass(j * 45, i * 45);
+                            arrGrass.add(grass25);
+                            FlyEnemy flyEnemy = new FlyEnemy(j * 45, i * 45, 3, 8);
+                            arrFlyEnemy.add(flyEnemy);
+                            break;
+                        case '4':
+                            Grass grass26 = new Grass(j * 45, i * 45);
+                            arrGrass.add(grass26);
+                            BigEnemy BigEnemy = new BigEnemy(j * 45, i * 45, 3, 8);
+                            arrBigEnemy.add(BigEnemy);
+                            hp[countBig++]=3;
                             break;
                         case 'b':
-                            {
-                                Grass grass23 = new Grass(j * 45, i * 45);
-                                arrGrass.add(grass23);
-                                Brick brick1 = new Brick(j * 45, i * 45);
-                                arrBrick.add(brick1);
-                                BombItem bombItem = new BombItem(j * 45, i * 45);
-                                arrBombItem.add(bombItem);
-                                break;
-                            }
+                        {
+                            Grass grass23 = new Grass(j * 45, i * 45);
+                            arrGrass.add(grass23);
+                            Brick brick1 = new Brick(j * 45, i * 45);
+                            arrBrick.add(brick1);
+                            BombItem bombItem = new BombItem(j * 45, i * 45);
+                            arrBombItem.add(bombItem);
+                            break;
+                        }
+                        case 'k':
+                        {
+                            Grass grass27 = new Grass(j * 45, i * 45);
+                            arrGrass.add(grass27);
+                            Brick brick3 = new Brick(j * 45, i * 45);
+                            arrBrick.add(brick3);
+                            Portal portal = new Portal(j * 45, i * 45);
+                            arrPortal.add(portal);
+                            break;
+                        }
                         case 'f':
-                            {
-                                Grass grass11 = new Grass(j * 45, i * 45);
-                                arrGrass.add(grass11);
-                                Brick brick2 = new Brick(j * 45, i * 45);
-                                arrBrick.add(brick2);
-                                FlameItem flameItem = new FlameItem(j * 45, i * 45);
-                                arrFlameItem.add(flameItem);
-                                break;
-                            }
+                        {
+                            Grass grass11 = new Grass(j * 45, i * 45);
+                            arrGrass.add(grass11);
+                            Brick brick2 = new Brick(j * 45, i * 45);
+                            arrBrick.add(brick2);
+                            FlameItem flameItem = new FlameItem(j * 45, i * 45);
+                            arrFlameItem.add(flameItem);
+                            break;
+                        }
                         case 's':
-                            {
-                                Grass grass21 = new Grass(j * 45, i * 45);
-                                arrGrass.add(grass21);
-                                Brick brick3 = new Brick(j * 45, i * 45);
-                                arrBrick.add(brick3);
-                                SpeedItem speedItem = new SpeedItem(j * 45, i * 45);
-                                arrSpeedItem.add(speedItem);
-                                break;
-                            }
+                        {
+                            Grass grass21 = new Grass(j * 45, i * 45);
+                            arrGrass.add(grass21);
+                            Brick brick3 = new Brick(j * 45, i * 45);
+                            arrBrick.add(brick3);
+                            SpeedItem speedItem = new SpeedItem(j * 45, i * 45);
+                            arrSpeedItem.add(speedItem);
+                            break;
+                        }
                         default:
                             Grass grass = new Grass(j * 45, i * 45);
                             arrGrass.add(grass);
@@ -152,13 +311,14 @@ public class ManageEntity {
 
                 }
             }
-            
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     
     public void initBomb() {
         if (bomber.getStatus() == Bomber.DIE) {
@@ -179,18 +339,35 @@ public class ManageEntity {
         arrBomb.add(bomb);
     }
 
-    public void showResult(Graphics2D graphics2d, int result) {
-        graphics2d.setFont(new Font("ARIAL", Font.BOLD, 70));
-        graphics2d.setColor(Color.DARK_GRAY);
+    public void showResult(Graphics2D graphics2d, int result, int count) {
+        if(result == 0) {
+            graphics2d.setFont(new Font("ARIAL", Font.BOLD, 17));
+            graphics2d.setColor(Color.DARK_GRAY);
+            graphics2d.drawString("Round: I", 5, 15);
+        }
         if(result == 1) {
+            graphics2d.setFont(new Font("ARIAL", Font.BOLD, 70));
+            graphics2d.setColor(Color.DARK_GRAY);
             graphics2d.drawString("LOSER :)))", 500, 250);
         }
-        if(result == 2) {
-            graphics2d.drawString("WELL :))) FINALLY YOU WON", 500, 250);
+        if(result == 2 && key == 1) {
+            graphics2d.setFont(new Font("ARIAL", Font.BOLD, 17));
+            graphics2d.setColor(Color.DARK_GRAY);
+            graphics2d.drawString("Round: II", 5, 15);
+        }
+        if(result == 3) {
+            graphics2d.setFont(new Font("ARIAL", Font.BOLD, 70));
+            graphics2d.setColor(Color.DARK_GRAY);
+            graphics2d.drawString("YOU WON :)))", 500, 250);
         }
     }
 
-    
+    public void clearall(){
+        arrEnemy.clear();
+        arrFlyEnemy.clear();
+        arrBigEnemy.clear();
+        arrRedEnemy.clear();
+    }
     public void showAllWall(Graphics2D graphics2d) {
         for (int i = 0; i < arrWall.size(); i++) {
             arrWall.get(i).showWall(graphics2d);
@@ -208,13 +385,24 @@ public class ManageEntity {
             arrEnemy.get(i).showEnemy(graphics2d);
         }
     }
+    public void showAllBigEnemy(Graphics2D graphics2d) {
+        for (int i = 0; i < arrBigEnemy.size(); i++) {
+            arrBigEnemy.get(i).showBigEnemy(graphics2d);
+        }
+    }
     
     public void showAllRedEnemy(Graphics2D graphics2d) {
         for (int i = 0; i < arrRedEnemy.size(); i++) {
             arrRedEnemy.get(i).showRedEnemy(graphics2d);
         }
     }
-    
+    public void showAllFlyEnemy(Graphics2D graphics2d) {
+        for (int i = 0; i < arrFlyEnemy.size(); i++) {
+            arrFlyEnemy.get(i).showFlyEnemy(graphics2d);
+        }
+    }
+
+
     public void showAllGrass(Graphics2D graphics2d) {
         for (int i = 0; i < arrGrass.size(); i++) {
             arrGrass.get(i).showGrass(graphics2d);
@@ -241,6 +429,10 @@ public class ManageEntity {
         for (int i = 0; i < arrSpeedItem.size(); i++) {
             arrSpeedItem.get(i).showItem(graphics2d);
         }
+        for (int i = 0; i < arrPortal.size(); i++) {
+            arrPortal.get(i).showItem(graphics2d);
+        }
+
     }
 
     public void bomberEatItem() {
@@ -265,6 +457,22 @@ public class ManageEntity {
                 arrSpeedItem.remove(i);
             }
         }
+        for (int i = 0; i < arrPortal.size(); i++) {
+            if (arrPortal.get(i).itemImpactBomber(bomber)) {
+                Sound.instance.getAudio(Sound.ITEM).play();
+                key = 1;
+                arrPortal.remove(i);
+            }
+        }
+    }
+
+    public boolean checkKey(){
+        if(key == 1) return true;
+        else return false;
+    }
+
+    public void setKey(int k){
+        key = k;
     }
     
     public void setResult() {
@@ -273,8 +481,13 @@ public class ManageEntity {
             Sound.getIstance().getAudio(Sound.PLAYGAME).stop();
             Sound.getIstance().getAudio(Sound.LOSE).play();
         }
-        if (arrRedEnemy.size() == 0 && arrEnemy.size() == 0) {
+        if (arrRedEnemy.size() == 0 && arrEnemy.size() == 0 && arrBigEnemy.size() == 0 && arrFlyEnemy.size() == 0 && result == 0) {
             result = 2;
+            //Sound.getIstance().getAudio(Sound.PLAYGAME).stop();
+            //Sound.getIstance().getAudio(Sound.WIN).play();
+        }
+        if (arrRedEnemy.size() == 0 && arrEnemy.size() == 0 && arrBigEnemy.size() == 0 && arrFlyEnemy.size() == 0 && result == 2 && pt == 1) {
+            result = 3;
             Sound.getIstance().getAudio(Sound.PLAYGAME).stop();
             Sound.getIstance().getAudio(Sound.WIN).play();
         }
@@ -305,8 +518,32 @@ public class ManageEntity {
                 Sound.instance.getAudio(Sound.DIE).play();
             }
         }
+        for (int i = 0; i < arrBigEnemy.size(); i++) {
+            if (bomber.bomberImpactMoveEntity(arrBigEnemy.get(i))) {
+                Image icon = new ImageIcon(getClass().getResource("/sprites1/bomber_dead.png")).getImage();
+                bomber.setImg(icon);
+                if (bomber.getStatus() == Bomber.DIE) {
+                    return;
+                }
+                bomber.setLife(bomber.getLife()- 1);
+                bomber.setStatus(Bomber.DIE);
+                Sound.instance.getAudio(Sound.DIE).play();
+            }
+        }
         for (int i = 0; i < arrRedEnemy.size(); i++) {
             if (bomber.bomberImpactMoveEntity(arrRedEnemy.get(i))) {
+                Image icon = new ImageIcon(getClass().getResource("/sprites1/bomber_dead.png")).getImage();
+                bomber.setImg(icon);
+                if (bomber.getStatus() == Bomber.DIE) {
+                    return;
+                }
+                bomber.setLife(bomber.getLife()- 1);
+                bomber.setStatus(Bomber.DIE);
+                Sound.instance.getAudio(Sound.DIE).play();
+            }
+        }
+        for (int i = 0; i < arrFlyEnemy.size(); i++) {
+            if (bomber.bomberImpactMoveEntity(arrFlyEnemy.get(i))) {
                 Image icon = new ImageIcon(getClass().getResource("/sprites1/bomber_dead.png")).getImage();
                 bomber.setImg(icon);
                 if (bomber.getStatus() == Bomber.DIE) {
@@ -326,6 +563,22 @@ public class ManageEntity {
             if (arrEnemy.get(i).move(count, arrWall, arrBrick, arrBomb) == false) {
                 int orient = random.nextInt(4) + 1;
                 arrEnemy.get(i).changeOrient(orient);
+            }
+        }
+    }
+    public void moveAllBigEnemy(int count) {
+        for (int i = 0; i < arrBigEnemy.size(); i++) {
+            if (arrBigEnemy.get(i).move(count, arrWall, arrBrick, arrBomb) == false) {
+                int orient = random.nextInt(4) + 1;
+                arrBigEnemy.get(i).changeOrient(orient);
+            }
+        }
+    }
+    public void moveAllFlyEnemy(int count) {
+        for (int i = 0; i < arrFlyEnemy.size(); i++) {
+            if ((arrFlyEnemy.get(i).move(count, arrWall, arrBrick, arrBomb) == false) || (count %2500 ==0)) {
+                int orient = random.nextInt(4) + 1;
+                arrFlyEnemy.get(i).changeOrient(orient);
             }
         }
     }
@@ -426,7 +679,27 @@ public class ManageEntity {
                     Sound.instance.getAudio(Sound.DIE).play();
                 }
             }
-        }      
+        }
+        for (int i = 0; i < arrFlameBomb.size(); i++) {
+            for (int j = 0; j < arrFlyEnemy.size(); j++) {
+                if (arrFlameBomb.get(i).flameImpactMoveEntity(arrFlyEnemy.get(j))) {
+                    arrFlyEnemy.remove(j);
+                    Sound.instance.getAudio(Sound.DIE).play();
+                }
+            }
+        }
+        for (int i = 0; i < arrFlameBomb.size(); i++) {
+            for (int j = 0; j < arrBigEnemy.size(); j++) {
+                if (arrFlameBomb.get(i).flameImpactMoveEntity(arrBigEnemy.get(j))) {
+                    if(arrFlameBomb.get(i).getTime() == 150)hp[j]--;
+                    System.out.println(hp[j]);
+                    if(hp[j]==0) {
+                        arrBigEnemy.remove(j);
+                        Sound.instance.getAudio(Sound.DIE).play();
+                    }
+                }
+            }
+        }
         for (int i = 0; i < arrFlameBomb.size(); i++) {
             for (int j = 0; j < arrBombItem.size(); j++) {
                 if (arrFlameBomb.get(i).flameImpactItem(arrBombItem.get(j))) {

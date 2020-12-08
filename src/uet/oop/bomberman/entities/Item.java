@@ -39,7 +39,7 @@ public class Item {
     }
     
     public void showItem(Graphics2D graphics2d) {
-        graphics2d.drawImage(img, x, y, null);
+        graphics2d.drawImage(img, x, y,null);
     }
     
     public boolean itemImpactBomber(Bomber bomber) {
