@@ -36,6 +36,7 @@ public class ManageEntity {
     private int countBig = 0;
     private int hp[];
     private int key;
+    private int retry = 0;
     
     public Bomber getBomber() {
         return bomber;
@@ -65,6 +66,10 @@ public class ManageEntity {
     }
     public void initManager(){
         if(result == 0) init();
+        if(result == 1){
+            init();
+            retry++;
+        }
         if(result == 2) {
             init2();
             pt = 1;
@@ -346,9 +351,10 @@ public class ManageEntity {
             graphics2d.drawString("Round: I", 5, 15);
         }
         if(result == 1) {
-            graphics2d.setFont(new Font("ARIAL", Font.BOLD, 70));
+            graphics2d.setFont(new Font("ARIAL", Font.BOLD, 17));
             graphics2d.setColor(Color.DARK_GRAY);
-            graphics2d.drawString("LOSER :)))", 500, 250);
+            graphics2d.drawString("YOU DIE !!!! Retry again", 200, 15);
+            graphics2d.drawString("Round: I", 5, 15);
         }
         if(result == 2 && key == 1) {
             graphics2d.setFont(new Font("ARIAL", Font.BOLD, 17));
@@ -358,7 +364,7 @@ public class ManageEntity {
         if(result == 3) {
             graphics2d.setFont(new Font("ARIAL", Font.BOLD, 70));
             graphics2d.setColor(Color.DARK_GRAY);
-            graphics2d.drawString("YOU WON :)))", 500, 250);
+            graphics2d.drawString("YOU WON :)))", 400, 250);
         }
     }
 

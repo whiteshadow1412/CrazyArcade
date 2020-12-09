@@ -134,15 +134,16 @@ public class PlayGame extends JPanel implements Runnable, ActionListener {
                 }
             }
             if(manageEntity.getResult() == 1) {
-                //timeLose++;
+                timeLose++;
+                if(timeLose == 5000)manageEntity.initManager();
                 //if(timeLose == 000) {
-                    running = false;
+                // running = false;
                 //}
             }
 
             if(manageEntity.getResult() == 2 && manageEntity.checkKey()){
                 timeNext++;
-                if(timeNext == 5)manageEntity.initManager();
+                if(timeNext == 50)manageEntity.initManager();
             }
             if(manageEntity.getResult() == 3){
                 running = false;
